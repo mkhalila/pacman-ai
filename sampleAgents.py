@@ -137,3 +137,13 @@ class GoWestAgent(Agent):
             return api.makeMove(Directions.WEST, legal)
         # Otherwise pick any other legal action
         return api.makeMove(random.choice(legal), legal)
+
+# HungryAgent 
+#
+# which uses information about the location of the food to try to
+# move towards the nearest food
+
+# SurvivalAgent 
+#
+# which uses the location of Pacman and the ghosts (and any
+# other information that may be helpful) to stay alive as long as possible.
