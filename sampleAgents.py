@@ -142,6 +142,28 @@ class GoWestAgent(Agent):
 #
 # which uses information about the location of the food to try to
 # move towards the nearest food
+class HungryAgent(Agent):
+
+    def getAction(self, state):
+        # Get the actions we can try, and remove "STOP" if that is one of them.
+        legal = api.legalActions(state)
+        if Directions.STOP in legal:
+            legal.remove(Directions.STOP)
+        # Get current location of pacman
+        pacman = api.whereAmI(state)
+        # Get list of food locations
+        food = api.food(state)
+        # Compute manhattan distance to each food location
+        foodDistances = []
+        for i in range(len(food)):
+            foodDistances.append(util.manhattanDistance(pacman,food[i]))
+        print foodDistances
+        minDistance = min(foodDistances)
+        print "Min Distance: ", minDistance
+        minDistanceIndex = foodDistances.index(minDistance)
+        print "Min Food index: ", minDistanceIndex
+        hungryChoice = random.choice(legal)
+        return api.makeMove(hungryChoice, legal)
 
 # SurvivalAgent 
 #
