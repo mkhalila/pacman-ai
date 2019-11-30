@@ -54,7 +54,6 @@ class MDPAgent(Agent):
         self.gamma = 0.5
         self.iterationLimit = 20
         self.actions = ["North", "East", "South", "West"]
-        self.ghostZone = {}
 
     def calcLayoutBounds(self, state):
         corners = api.corners(state)
