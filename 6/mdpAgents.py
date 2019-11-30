@@ -44,16 +44,10 @@ class MDPAgent(Agent):
             for j in range(y):
                 if (i, j) not in self.walls:
                     self.nonWalls.append((i, j))
-        self.values = dict.fromkeys(self.nonWalls, 0)
-        self.policy = dict.fromkeys(self.nonWalls, 'North')
-        self.rewards = {}
-        food = api.food(state)
-        capsules = api.capsules(state)
-        ghosts = api.ghosts(state)
-        self.updateRewards(food, capsules, ghosts)
         self.gamma = 0.5
         self.iterationLimit = 20
         self.actions = ["North", "East", "South", "West"]
+        self.updateMap(state)
 
     def calcLayoutBounds(self, state):
         corners = api.corners(state)
@@ -82,6 +76,7 @@ class MDPAgent(Agent):
         return width + 1
 
     def updateRewards(self, food, capsules, ghosts):
+        self.rewards = {}
         for i in self.nonWalls:
             if i in food:
                 self.rewards[i] = 10
@@ -166,10 +161,10 @@ class MDPAgent(Agent):
         self.updateRewards(api.food(state), api.capsules(state), api.ghosts(state))
         self.resetValues()
         self.resetPolicy()
-        self.policyIteration()
 
     def getAction(self, state):
         self.updateMap(state)
+        self.policyIteration()
         pacman = api.whereAmI(state)
         legal = api.legalActions(state)
         move = self.policy[pacman]
