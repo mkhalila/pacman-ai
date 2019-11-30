@@ -1,0 +1,17 @@
+# GoWestAgent
+#
+# Goes West when it can. When it, can't it makes a random choice
+class GoWestAgent(Agent):
+
+    def getAction(self, state):
+        # Get the actions we can try, and remove "STOP" if that is one of them.
+        legal = api.legalActions(state)
+        if Directions.STOP in legal:
+            legal.remove(Directions.STOP)
+        # Go west if possible
+        if Directions.WEST in legal:
+            return api.makeMove(Directions.WEST, legal)
+        # Otherwise make a random choice
+        else:
+            pick = random.choice(legal)
+            return api.makeMove(pick, legal)
