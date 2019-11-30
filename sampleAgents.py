@@ -157,15 +157,131 @@ class HungryAgent(Agent):
         foodDistances = []
         for i in range(len(food)):
             foodDistances.append(util.manhattanDistance(pacman,food[i]))
-        print foodDistances
+        # print foodDistances
         minDistance = min(foodDistances)
-        print "Min Distance: ", minDistance
+        # print "Min Distance: ", minDistance
         minDistanceIndex = foodDistances.index(minDistance)
-        print "Min Food index: ", minDistanceIndex
-        hungryChoice = random.choice(legal)
-        return api.makeMove(hungryChoice, legal)
+        # print "Min Food index: ", minDistanceIndex
+        nearestFood = food[minDistanceIndex]
+        # print "Pacman: ", pacman
+        # print "Nearest Food: ", nearestFood
+        diffX = pacman[0] - nearestFood[0]
+        diffY = pacman[1] - nearestFood[1]
+        # print "legal", legal
+        # print diffX, diffY
+        moveX = Directions.STOP
+        moveY = Directions.STOP
+        # Determine whether to move east or west
+        if diffX >= 0:
+            # print "Go left"
+            moveX = Directions.WEST
+        elif diffX < 0:
+            # print "Go right"
+            moveX = Directions.EAST
+        # Determine whether to move north or south
+        if diffY >= 0:
+            # print "Go down"
+            moveY = Directions.SOUTH
+        elif diffY < 0:
+            # print "Go up"
+            moveY = Directions.NORTH
+        # Determine whether to move in X or Y
+        # print "diffX: ", diffX, " diffY", diffY
+        if abs(diffX) >= abs(diffY) and moveX in legal:
+            # print moveX
+            return api.makeMove(moveX, legal)
+        elif abs(diffY) >= 0 and moveY in legal:
+            # print moveY
+            return api.makeMove(moveY, legal)
+        elif abs(diffX) >= 0 and moveX in legal:
+            return api.makeMove(moveX, legal)
+        else:
+            # print "Random"
+            return api.makeMove(random.choice(legal), legal)
 
 # SurvivalAgent 
 #
 # which uses the location of Pacman and the ghosts (and any
 # other information that may be helpful) to stay alive as long as possible.
+class SurvivalAgent(Agent):
+
+    def getAction(self, state):
+        print "-------------"
+        # Get the actions we can try, and remove "STOP" if that is one of them.
+        legal = api.legalActions(state)
+        if Directions.STOP in legal:
+            legal.remove(Directions.STOP)
+        # Get current location of pacman
+        pacman = api.whereAmI(state)
+        # Get list of ghost locations
+        ghosts = api.ghosts(state)
+        # Compute manhattan distance to each ghost location
+        ghostsDistances = []
+        for i in range(len(ghosts)):
+            ghostsDistances.append(util.manhattanDistance(pacman,ghosts[i]))
+        minDistance = min(ghostsDistances)
+        # print "Min Distance: ", minDistance
+        minDistanceIndex = ghostsDistances.index(minDistance)
+        # print "Min Ghosts index: ", minDistanceIndex
+        nearestGhost = ghosts[minDistanceIndex]
+        # print "Pacman: ", pacman
+        # print "Nearest Ghost: ", nearestGhost
+        diffX = pacman[0] - nearestGhost[0]
+        diffY = pacman[1] - nearestGhost[1]
+        # print "legal", legal
+        # print diffX, diffY
+        moveX = Directions.STOP
+        moveY = Directions.STOP
+        # Determine whether to move east or west
+        if diffX >= 0:
+            # print "Go right"
+            moveX = Directions.EAST
+        elif diffX < 0:
+            # print "Go left"
+            moveX = Directions.WEST
+        # Determine whether to move north or south
+        if diffY >= 0:
+            # print "Go up"
+            moveY = Directions.NORTH
+        elif diffY < 0:
+            # print "Go down"
+            moveY = Directions.SOUTH
+        # Determine whether to move in X or Y
+        # print "diffX: ", diffX, " diffY", diffY
+        if abs(diffX) >= abs(diffY) and moveX in legal:
+            # print moveX
+            return api.makeMove(moveX, legal)
+        elif abs(diffY) >= 0 and moveY in legal:
+            # print moveY
+            return api.makeMove(moveY, legal)
+        elif abs(diffX) >= 0 and moveX in legal:
+            # print moveX
+            return api.makeMove(moveX, legal)
+        else:
+            print "Best Random"
+            # print legal
+            # For each legal, calculate where it would take you
+            legals = {}
+            for i in range(len(legal)):
+                if legal[i] == Directions.NORTH:
+                    legals[legal[i]] = (pacman[0], pacman[1] + 1)
+                if legal[i] == Directions.EAST:
+                    legals[legal[i]] = (pacman[0] + 1, pacman[1])
+                if legal[i] == Directions.SOUTH:
+                    legals[legal[i]] = (pacman[0], pacman[1] - 1)
+                if legal[i] == Directions.WEST:
+                    legals[legal[i]] = (pacman[0] - 1, pacman[1])
+            print legals
+            # For each legal move location, calculate how far from the ghost it is
+            for k in legals:
+                legals[k] = util.manhattanDistance(legals[k], nearestGhost)
+            print legals
+            # Pick the move that has largest distance
+            bestLegalDistance = 0
+            bestLegal = Directions.STOP
+            for k in legals:
+                if legals[k] >= bestLegalDistance:
+                    bestLegal = k
+                    bestLegalDistance = legals[k]
+            print "bestLegal", bestLegal
+            return api.makeMove(bestLegal, legal)
