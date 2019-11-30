@@ -108,12 +108,10 @@ class MDPAgent(Agent):
                     self.rewards[w] = -50
 
     def resetValues(self):
-        for i in self.values:
-            self.values[i] = 0
+        self.values = dict.fromkeys(self.nonWalls, 0)
 
     def resetPolicy(self):
-        for i in self.policy:
-            self.policy[i] = "North"
+        self.policy = dict.fromkeys(self.nonWalls, 'North')
 
     def getSurroundingLocations(self, x, y):
         n = (x, y + 1)
