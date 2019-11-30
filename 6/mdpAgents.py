@@ -171,18 +171,15 @@ class MDPAgent(Agent):
             if i in ghosts:
                 self.rewards[i] = -100
                 (x, y) = i
-                northLoc = (x, y + 1)
-                eastLoc = (x + 1, y)
-                southLoc = (x, y - 1)
-                westLoc = (x - 1, y)
-                if northLoc in self.rewards:
-                    self.rewards[northLoc] = -50
-                if eastLoc in self.rewards:
-                    self.rewards[eastLoc] = -50
-                if southLoc in self.rewards:
-                    self.rewards[southLoc] = -50
-                if westLoc in self.rewards:
-                    self.rewards[westLoc] = -50
+                (n, e, s, w) = self.getSurroundingLocations(x, y)
+                if n in self.rewards:
+                    self.rewards[n] = -50
+                if e in self.rewards:
+                    self.rewards[e] = -50
+                if s in self.rewards:
+                    self.rewards[s] = -50
+                if w in self.rewards:
+                    self.rewards[w] = -50
 
     def resetValues(self):
         for i in self.values:
@@ -192,22 +189,32 @@ class MDPAgent(Agent):
         for i in self.policy:
             self.policy[i] = "North"
 
+    def getSurroundingLocations(self, x, y):
+        n = (x, y + 1)
+        e = (x + 1, y)
+        s = (x, y - 1)
+        w = (x - 1, y)
+        return (n, e, s, w)
+
     def expectedUtility(self, x, y, action):
-        currentLoc = (x,y);     currentValue = self.values[currentLoc]
+        current = (x,y)
+        (nLoc, eLoc, sLoc, wLoc) = self.getSurroundingLocations(x, y)
+
         # If move results to a wall, stay in original position
-        northLoc = (x, y + 1);  northValue = self.values[northLoc] if northLoc not in self.walls else currentValue
-        eastLoc = (x + 1, y);   eastValue = self.values[eastLoc] if eastLoc not in self.walls else currentValue
-        southLoc = (x, y - 1);  southValue = self.values[southLoc] if southLoc not in self.walls else currentValue
-        westLoc = (x - 1, y);   westValue = self.values[westLoc] if westLoc not in self.walls else currentValue
+        currentValue = self.values[current]
+        nValue = self.values[nLoc] if nLoc not in self.walls else currentValue
+        eValue = self.values[eLoc] if eLoc not in self.walls else currentValue
+        sValue = self.values[sLoc] if sLoc not in self.walls else currentValue
+        wValue = self.values[wLoc] if wLoc not in self.walls else currentValue
 
         if action == 'North':
-            return 0.8*northValue + 0.1*eastValue + 0.1*westValue
+            return 0.8 * nValue + 0.1 * eValue + 0.1 * wValue
         elif action == 'East':
-            return 0.8*eastValue + 0.1*northValue + 0.1*southValue
+            return 0.8 * eValue + 0.1 * nValue + 0.1 * sValue
         elif action == 'South':
-            return 0.8*southValue + 0.1*eastValue + 0.1*westValue
+            return 0.8 * sValue + 0.1 * eValue + 0.1 * wValue
         else:
-            return 0.8*westValue + 0.1*northValue + 0.1*southValue
+            return 0.8 * wValue + 0.1 * nValue + 0.1 * sValue
 
     def argmax(self, utils):
         i = utils.index(max(utils))
