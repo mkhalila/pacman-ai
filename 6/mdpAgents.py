@@ -114,23 +114,18 @@ class MDPAgent(Agent):
         # print "Running registerInitialState!"
         self.map = self.makeMap(state)
         self.walls = api.walls(state)
-        # print self.walls
         self.nonWalls = []
         for i in range(self.map.getWidth()):
             for j in range(self.map.getHeight()):
                 if (i, j) not in self.walls:
                     self.nonWalls.append((i, j))
-        # print self.nonWalls
         self.values = dict.fromkeys(self.nonWalls, 0)
-        # print self.values
         self.policy = dict.fromkeys(self.nonWalls, 'North')
-        # print self.policy
         self.rewards = {}
         food = api.food(state)
         capsules = api.capsules(state)
         ghosts = api.ghosts(state)
         self.updateRewards(food, capsules, ghosts)
-        # print self.rewards
         self.gamma = 0.5
         self.iterationLimit = 20
         self.actions = ["North", "East", "South", "West"]
@@ -169,19 +164,6 @@ class MDPAgent(Agent):
                 self.rewards[i] = 20
             # elif i in ghosts:
             #     self.rewards[i] = -100
-            #     (x, y) = i
-            #     northLoc = (x, y + 1)
-            #     eastLoc = (x + 1, y)
-            #     southLoc = (x, y - 1)
-            #     westLoc = (x - 1, y)
-            #     if northLoc in self.rewards:
-            #         self.rewards[northLoc] = -50
-            #     if eastLoc in self.rewards:
-            #         self.rewards[eastLoc] = -50
-            #     if southLoc in self.rewards:
-            #         self.rewards[southLoc] = -50
-            #     if westLoc in self.rewards:
-            #         self.rewards[westLoc] = -50
             else:
                 self.rewards[i] = -1
         
@@ -262,6 +244,4 @@ class MDPAgent(Agent):
         pacman = api.whereAmI(state)
         legal = api.legalActions(state)
         move = self.policy[pacman]
-        # print self.values
-        # print move
         return api.makeMove(move, legal)
