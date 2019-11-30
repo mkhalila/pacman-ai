@@ -62,6 +62,9 @@ class MDPAgent(Agent):
         width  = self.getLayoutWidth(corners)
         return (width, height)
 
+    # This code has been taken from mapAgents.py
+    # Which was provided as a solution to practical
+    # 05 of the AI module
     def getLayoutHeight(self, corners):
         height = -1
         for i in range(len(corners)):
@@ -69,6 +72,9 @@ class MDPAgent(Agent):
                 height = corners[i][1]
         return height + 1
 
+    # This code has been taken from mapAgents.py
+    # Which was provided as a solution to practical
+    # 05 of the AI module
     def getLayoutWidth(self, corners):
         width = -1
         for i in range(len(corners)):
@@ -142,7 +148,7 @@ class MDPAgent(Agent):
 
     def policyIteration(self):
         while True:
-            self.policyEvaluation()
+            self.policyEval()
             unchanged = True
             for k in self.values:
                 expectedUtilities = []
@@ -152,10 +158,10 @@ class MDPAgent(Agent):
                 if a != self.policy[k]:
                     self.policy[k] = a
                     unchanged = False
-            if unchanged:
+            if unchanged: 
                 return
 
-    def policyEvaluation(self):
+    def policyEval(self):
         for i in range(self.iterationLimit):
             for k in self.values:
                 self.values[k] = self.rewards[k] + self.gamma * self.expectedUtility(k[0], k[1], self.policy[k])
