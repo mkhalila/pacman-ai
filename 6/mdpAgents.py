@@ -149,7 +149,7 @@ class MDPAgent(Agent):
     def policyIteration(self):
         while True:
             self.policyEval()
-            unchanged = True
+            same = True
             for k in self.values:
                 expectedUtilities = []
                 for action in self.actions:
@@ -157,9 +157,8 @@ class MDPAgent(Agent):
                 a = self.argmax(expectedUtilities)
                 if a != self.policy[k]:
                     self.policy[k] = a
-                    unchanged = False
-            if unchanged: 
-                return
+                    same = False
+            if same: return
 
     def policyEval(self):
         for i in range(self.iterationLimit):
