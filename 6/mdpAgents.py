@@ -38,16 +38,20 @@ class MDPAgent(Agent):
 
     def registerInitialState(self, state):
         self.walls = api.walls(state)
-        self.nonWalls = []
-        (x, y) = self.calcLayoutBounds(state)
-        for i in range(x):
-            for j in range(y):
-                if (i, j) not in self.walls:
-                    self.nonWalls.append((i, j))
+        self.nonWalls = self.getNonWalls(state)
         self.gamma = 0.5
         self.iterationLimit = 20
         self.actions = ["North", "East", "South", "West"]
         self.updateMap(state)
+
+    def getNonWalls(self, state):
+        nonWalls = []
+        (x, y) = self.calcLayoutBounds(state)
+        for i in range(x):
+            for j in range(y):
+                if (i, j) not in self.walls:
+                    nonWalls.append((i, j))
+        return nonWalls
 
     def calcLayoutBounds(self, state):
         corners = api.corners(state)
