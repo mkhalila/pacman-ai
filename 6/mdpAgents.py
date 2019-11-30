@@ -36,11 +36,7 @@ import sys
 
 class MDPAgent(Agent):
 
-    def __init__(self):
-        print "Running init!"
-
     def registerInitialState(self, state):
-        # print "Running registerInitialState!"
         self.walls = api.walls(state)
         self.nonWalls = []
         (x, y) = self.calcLayoutBounds(state)
@@ -59,11 +55,6 @@ class MDPAgent(Agent):
         self.iterationLimit = 20
         self.actions = ["North", "East", "South", "West"]
         self.ghostZone = {}
-
-
-    # This is what gets run when the game ends.
-    def final(self, state):
-        print "Looks like I just died!"
 
     def calcLayoutBounds(self, state):
         corners = api.corners(state)
